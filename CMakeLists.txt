@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 20)
 # 1. Añadimos raylib
 add_subdirectory(raylib)
 
+file(COPY Imagenes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
 # 2. Creamos el ejecutable incluyendo las rutas a las carpetas Modelos
 add_executable(Dodle_jump
         src/main.cpp
@@ -13,6 +15,8 @@ add_executable(Dodle_jump
         include/Modelos/Jugador.h
         src/Modelos/Plataforma.cpp
         include/Modelos/Plataforma.h
+        src/Modelos/Mapas.cpp
+        include/Modelos/Mapas.h
 )
 
 # 3. Enlazamos la librería
