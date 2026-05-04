@@ -10,7 +10,7 @@ int main() {
     const int screenWidth  = 600;
     const int screenHeight = 800;
 
-    InitWindow(screenWidth, screenHeight, "Dodle Jump - Dificultad Dinamica");
+    InitWindow(screenWidth, screenHeight, "Dodle Jump -");
 
     Plataforma misPlataformas[MAX_PLATAFORMAS];
     InicializarPlataformas(misPlataformas);
