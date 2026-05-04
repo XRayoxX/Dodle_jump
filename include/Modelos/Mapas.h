@@ -5,12 +5,14 @@
 #ifndef DODLE_JUMP_MAPAS_H
 #define DODLE_JUMP_MAPAS_H
 
+#include "raylib.h"
 
-
-class Mapas {
-
+struct Mapas {
+    Texture2D fondo;
 };
 
-
+void InicializarMapas(Mapas& mapas, const char* rutaFondo);
+void DibujarMapas(const Mapas& mapas, int screenWidth, int screenHeight);
+void LiberarMapas(Mapas& mapas);
 
 #endif //DODLE_JUMP_MAPAS_H

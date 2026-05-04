@@ -3,6 +3,7 @@
 #include <time.h>
 #include "Modelos/Jugador.h"
 #include "Modelos/Plataforma.h"
+#include "Modelos/Mapas.h"
 
 int main() {
     srand(time(NULL));
@@ -11,6 +12,9 @@ int main() {
     const int screenHeight = 800;
 
     InitWindow(screenWidth, screenHeight, "Dodle Jump -");
+
+    Mapas miMapa;
+    InicializarMapas(miMapa, R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo1.png)");
 
     Plataforma misPlataformas[MAX_PLATAFORMAS];
     InicializarPlataformas(misPlataformas);
@@ -66,6 +70,7 @@ int main() {
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
+        DibujarMapas(miMapa, screenWidth, screenHeight);
         DibujarPlataformas(misPlataformas);
         DibujarJugador(miJugador);
 
@@ -75,6 +80,7 @@ int main() {
         EndDrawing(); // ← faltaba esto también
     }
 
+    LiberarMapas(miMapa);
     CloseWindow();
     return 0;
 }
