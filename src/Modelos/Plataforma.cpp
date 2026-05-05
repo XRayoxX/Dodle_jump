@@ -1,6 +1,44 @@
 #include "Modelos/Plataforma.h"
 #include <stdlib.h>
 
+static const char* kOneUseLeftPath   = "../Imagenes/Tiles Plataforma un uso/tile_0001.png";
+static const char* kOneUseCenterPath = "../Imagenes/Tiles Plataforma un uso/tile_0002.png";
+static const char* kOneUseRightPath  = "../Imagenes/Tiles Plataforma un uso/tile_0003.png";
+
+static Texture2D gOneUseLeft = {};
+static Texture2D gOneUseCenter = {};
+static Texture2D gOneUseRight = {};
+static bool gOneUseLoaded = false;
+
+void CargarTexturasPlataformas() {
+    if (gOneUseLoaded) return;
+
+    gOneUseLeft = LoadTexture(kOneUseLeftPath);
+    gOneUseCenter = LoadTexture(kOneUseCenterPath);
+    gOneUseRight = LoadTexture(kOneUseRightPath);
+
+    gOneUseLoaded = (gOneUseLeft.id != 0) && (gOneUseCenter.id != 0) && (gOneUseRight.id != 0);
+    if (!gOneUseLoaded) {
+        if (gOneUseLeft.id != 0) UnloadTexture(gOneUseLeft);
+        if (gOneUseCenter.id != 0) UnloadTexture(gOneUseCenter);
+        if (gOneUseRight.id != 0) UnloadTexture(gOneUseRight);
+        gOneUseLeft = {};
+        gOneUseCenter = {};
+        gOneUseRight = {};
+    }
+}
+
+void LiberarTexturasPlataformas() {
+    if (!gOneUseLoaded) return;
+    UnloadTexture(gOneUseLeft);
+    UnloadTexture(gOneUseCenter);
+    UnloadTexture(gOneUseRight);
+    gOneUseLeft = {};
+    gOneUseCenter = {};
+    gOneUseRight = {};
+    gOneUseLoaded = false;
+}
+
 // ── Devuelve nivel según umbrales configurables ──────────────────────────────
 int ObtenerNivel(int puntaje) {
     if (puntaje >= UMBRAL_NIVEL_4) return 4;
@@ -159,18 +197,75 @@ void ActualizarPlataformas(Plataforma plataformas[], float scrollSpeed, int punt
     }
 }
 
+static void DibujarPlataformaUnUso(const Plataforma& plataforma) {
+    if (!gOneUseLoaded) {
+        DrawRectangleRec(plataforma.rect, YELLOW);
+        return;
+    }
+
+    float tileW = (float)gOneUseCenter.width;
+    float tileH = (float)gOneUseCenter.height;
+
+    Rectangle src = { 0.0f, 0.0f, tileW, tileH };
+    float minWidth = tileW * 2.0f;
+
+    if (plataforma.rect.width <= minWidth) {
+        float leftW = plataforma.rect.width * 0.5f;
+        float rightW = plataforma.rect.width - leftW;
+        DrawTexturePro(gOneUseLeft, src,
+                       { plataforma.rect.x, plataforma.rect.y, leftW, plataforma.rect.height },
+                       { 0.0f, 0.0f }, 0.0f, WHITE);
+        DrawTexturePro(gOneUseRight, src,
+                       { plataforma.rect.x + leftW, plataforma.rect.y, rightW, plataforma.rect.height },
+                       { 0.0f, 0.0f }, 0.0f, WHITE);
+        return;
+    }
+
+    float leftX = plataforma.rect.x;
+    float rightX = plataforma.rect.x + plataforma.rect.width - tileW;
+
+    DrawTexturePro(gOneUseLeft, src,
+                   { leftX, plataforma.rect.y, tileW, plataforma.rect.height },
+                   { 0.0f, 0.0f }, 0.0f, WHITE);
+    DrawTexturePro(gOneUseRight, src,
+                   { rightX, plataforma.rect.y, tileW, plataforma.rect.height },
+                   { 0.0f, 0.0f }, 0.0f, WHITE);
+
+    float x = leftX + tileW;
+    float endX = rightX;
+    while (x + tileW <= endX) {
+        DrawTexturePro(gOneUseCenter, src,
+                       { x, plataforma.rect.y, tileW, plataforma.rect.height },
+                       { 0.0f, 0.0f }, 0.0f, WHITE);
+        x += tileW;
+    }
+
+    float remainder = endX - x;
+    if (remainder > 0.5f) {
+        DrawTexturePro(gOneUseCenter, src,
+                       { x, plataforma.rect.y, remainder, plataforma.rect.height },
+                       { 0.0f, 0.0f }, 0.0f, WHITE);
+    }
+}
+
 // ── Dibujo ───────────────────────────────────────────────────────────────────
 void DibujarPlataformas(Plataforma plataformas[]) {
     for (int i = 0; i < MAX_PLATAFORMAS; i++) {
         if (!plataformas[i].activa) continue;
 
-        Color color;
         switch (plataformas[i].tipo) {
-            case NORMAL:      color = SKYBLUE; break;
-            case MOVIL_BOOST: color = BLUE;    break;
-            case UN_USO:      color = YELLOW;  break;
-            default:          color = GRAY;    break;
+            case NORMAL:
+                DrawRectangleRec(plataformas[i].rect, SKYBLUE);
+                break;
+            case MOVIL_BOOST:
+                DrawRectangleRec(plataformas[i].rect, BLUE);
+                break;
+            case UN_USO:
+                DibujarPlataformaUnUso(plataformas[i]);
+                break;
+            default:
+                DrawRectangleRec(plataformas[i].rect, GRAY);
+                break;
         }
-        DrawRectangleRec(plataformas[i].rect, color);
     }
 }

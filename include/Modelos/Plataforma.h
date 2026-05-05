@@ -55,6 +55,8 @@ struct Plataforma {
 void InicializarPlataformas(Plataforma plataformas[]);
 void ActualizarPlataformas(Plataforma plataformas[], float scrollSpeed, int puntaje);
 void DibujarPlataformas(Plataforma plataformas[]);
+void CargarTexturasPlataformas();
+void LiberarTexturasPlataformas();
 
 // Devuelve el nivel actual según puntaje (útil para mostrarlo en main)
 int ObtenerNivel(int puntaje);

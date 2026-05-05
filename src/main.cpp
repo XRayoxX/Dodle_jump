@@ -14,7 +14,9 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Dodle Jump -");
 
     Mapas miMapa;
-    InicializarMapas(miMapa, R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo1.png)");
+    InicializarMapas(miMapa, R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo2.png)");
+
+    CargarTexturasPlataformas();
 
     Plataforma misPlataformas[MAX_PLATAFORMAS];
     InicializarPlataformas(misPlataformas);
@@ -81,6 +83,7 @@ int main() {
     }
 
     LiberarMapas(miMapa);
+    LiberarTexturasPlataformas();
     CloseWindow();
     return 0;
 }
