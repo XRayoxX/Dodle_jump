@@ -4,6 +4,7 @@
 #include "Modelos/Jugador.h"
 #include "Modelos/Plataforma.h"
 #include "Modelos/Mapas.h"
+#include "Audio/AudioManager.h"
 
 int main() {
     srand(time(NULL));
@@ -12,6 +13,9 @@ int main() {
     const int screenHeight = 800;
 
     InitWindow(screenWidth, screenHeight, "Dodle Jump -");
+
+    // --- Audio ---
+    InitAudioManager();
 
     // --- Fondo y texturas ---
     Mapas miMapa;
@@ -57,6 +61,9 @@ int main() {
                     miJugador.velocidad.y = IMPULSO_NORMAL;
                 }
 
+                // Sonido segun plataforma para evitar solapes.
+                PlayJumpSound(misPlataformas[i].tipo);
+
                 if (misPlataformas[i].tipo == UN_USO) {
                     misPlataformas[i].activa = false;
                 }
@@ -87,6 +94,7 @@ int main() {
     // --- Limpieza ---
     LiberarMapas(miMapa);
     LiberarTexturasPlataformas();
+    ShutdownAudioManager();
     CloseWindow();
     return 0;
 }

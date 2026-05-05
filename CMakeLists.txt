@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(raylib)
 
 file(COPY Imagenes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY Audio DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 # 2. Creamos el ejecutable incluyendo las rutas a las carpetas Modelos
 add_executable(Dodle_jump
@@ -17,6 +18,8 @@ add_executable(Dodle_jump
         include/Modelos/Plataforma.h
         src/Modelos/Mapas.cpp
         include/Modelos/Mapas.h
+        src/Audio/AudioManager.cpp
+        include/Audio/AudioManager.h
 )
 
 # 3. Enlazamos la librería
