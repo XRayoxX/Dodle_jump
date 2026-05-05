@@ -1,17 +1,41 @@
 #include "Modelos/Plataforma.h"
 #include <stdlib.h>
 
+// --- Rutas de texturas (relativas al directorio de ejecución) ---
 static const char* kOneUseLeftPath   = "../Imagenes/Tiles Plataforma un uso/tile_0001.png";
 static const char* kOneUseCenterPath = "../Imagenes/Tiles Plataforma un uso/tile_0002.png";
 static const char* kOneUseRightPath  = "../Imagenes/Tiles Plataforma un uso/tile_0003.png";
+static const char* kNormalLeftPath   = "../Imagenes/Tiles Plataforma Normal/Plataforma_01.png";
+static const char* kNormalCenterPath = "../Imagenes/Tiles Plataforma Normal/Plataforma_02.png";
+static const char* kNormalRightPath  = "../Imagenes/Tiles Plataforma Normal/Plataforma_03.png";
+static const char* kBoostLeftPath    = "../Imagenes/Tiles Plataforma Bost/tile_0087.png";
+static const char* kBoostCenterPath  = "../Imagenes/Tiles Plataforma Bost/tile_0088.png";
+static const char* kBoostRightPath   = "../Imagenes/Tiles Plataforma Bost/tile_0090.png";
+static const char* kBoostArrowPath   = "../Imagenes/Tiles Plataforma Bost/Boost.png";
 
+// --- Texturas y estado de carga ---
 static Texture2D gOneUseLeft = {};
 static Texture2D gOneUseCenter = {};
 static Texture2D gOneUseRight = {};
 static bool gOneUseLoaded = false;
 
+static Texture2D gNormalLeft = {};
+static Texture2D gNormalCenter = {};
+static Texture2D gNormalRight = {};
+static bool gNormalLoaded = false;
+
+static Texture2D gBoostLeft = {};
+static Texture2D gBoostCenter = {};
+static Texture2D gBoostRight = {};
+static bool gBoostLoaded = false;
+
+static Texture2D gBoostArrow = {};
+static bool gBoostArrowLoaded = false;
+
+// --- Ciclo de vida de texturas ---
 void CargarTexturasPlataformas() {
-    if (gOneUseLoaded) return;
+    // Carga idempotente: si ya estan todas, no recargar.
+    if (gOneUseLoaded && gNormalLoaded && gBoostLoaded && gBoostArrowLoaded) return;
 
     gOneUseLeft = LoadTexture(kOneUseLeftPath);
     gOneUseCenter = LoadTexture(kOneUseCenterPath);
@@ -26,19 +50,80 @@ void CargarTexturasPlataformas() {
         gOneUseCenter = {};
         gOneUseRight = {};
     }
+
+    gNormalLeft = LoadTexture(kNormalLeftPath);
+    gNormalCenter = LoadTexture(kNormalCenterPath);
+    gNormalRight = LoadTexture(kNormalRightPath);
+
+    gNormalLoaded = (gNormalLeft.id != 0) && (gNormalCenter.id != 0) && (gNormalRight.id != 0);
+    if (!gNormalLoaded) {
+        if (gNormalLeft.id != 0) UnloadTexture(gNormalLeft);
+        if (gNormalCenter.id != 0) UnloadTexture(gNormalCenter);
+        if (gNormalRight.id != 0) UnloadTexture(gNormalRight);
+        gNormalLeft = {};
+        gNormalCenter = {};
+        gNormalRight = {};
+    }
+
+    gBoostLeft = LoadTexture(kBoostLeftPath);
+    gBoostCenter = LoadTexture(kBoostCenterPath);
+    gBoostRight = LoadTexture(kBoostRightPath);
+
+    gBoostLoaded = (gBoostLeft.id != 0) && (gBoostCenter.id != 0) && (gBoostRight.id != 0);
+    if (!gBoostLoaded) {
+        if (gBoostLeft.id != 0) UnloadTexture(gBoostLeft);
+        if (gBoostCenter.id != 0) UnloadTexture(gBoostCenter);
+        if (gBoostRight.id != 0) UnloadTexture(gBoostRight);
+        gBoostLeft = {};
+        gBoostCenter = {};
+        gBoostRight = {};
+    }
+
+    gBoostArrow = LoadTexture(kBoostArrowPath);
+    gBoostArrowLoaded = (gBoostArrow.id != 0);
+    if (!gBoostArrowLoaded) {
+        if (gBoostArrow.id != 0) UnloadTexture(gBoostArrow);
+        gBoostArrow = {};
+    }
 }
 
 void LiberarTexturasPlataformas() {
-    if (!gOneUseLoaded) return;
-    UnloadTexture(gOneUseLeft);
-    UnloadTexture(gOneUseCenter);
-    UnloadTexture(gOneUseRight);
-    gOneUseLeft = {};
-    gOneUseCenter = {};
-    gOneUseRight = {};
-    gOneUseLoaded = false;
+    // Libera de forma segura solo lo cargado.
+    if (gOneUseLoaded) {
+        UnloadTexture(gOneUseLeft);
+        UnloadTexture(gOneUseCenter);
+        UnloadTexture(gOneUseRight);
+        gOneUseLeft = {};
+        gOneUseCenter = {};
+        gOneUseRight = {};
+        gOneUseLoaded = false;
+    }
+    if (gNormalLoaded) {
+        UnloadTexture(gNormalLeft);
+        UnloadTexture(gNormalCenter);
+        UnloadTexture(gNormalRight);
+        gNormalLeft = {};
+        gNormalCenter = {};
+        gNormalRight = {};
+        gNormalLoaded = false;
+    }
+    if (gBoostLoaded) {
+        UnloadTexture(gBoostLeft);
+        UnloadTexture(gBoostCenter);
+        UnloadTexture(gBoostRight);
+        gBoostLeft = {};
+        gBoostCenter = {};
+        gBoostRight = {};
+        gBoostLoaded = false;
+    }
+    if (gBoostArrowLoaded) {
+        UnloadTexture(gBoostArrow);
+        gBoostArrow = {};
+        gBoostArrowLoaded = false;
+    }
 }
 
+// --- Helpers de dificultad y sorteo ---
 // ── Devuelve nivel según umbrales configurables ──────────────────────────────
 int ObtenerNivel(int puntaje) {
     if (puntaje >= UMBRAL_NIVEL_4) return 4;
@@ -94,6 +179,7 @@ static TipoPlataforma SortearTipo(int nivel) {
     return UN_USO;
 }
 
+// --- Inicializacion y actualizacion ---
 // ── Inicialización ───────────────────────────────────────────────────────────
 void InicializarPlataformas(Plataforma plataformas[]) {
     // Plataforma 0: seguridad debajo del jugador
@@ -197,14 +283,20 @@ void ActualizarPlataformas(Plataforma plataformas[], float scrollSpeed, int punt
     }
 }
 
-static void DibujarPlataformaUnUso(const Plataforma& plataforma) {
-    if (!gOneUseLoaded) {
-        DrawRectangleRec(plataforma.rect, YELLOW);
+// --- Dibujo con tiles y efectos ---
+static void DibujarPlataformaTiled(const Plataforma& plataforma,
+                                  const Texture2D& left,
+                                  const Texture2D& center,
+                                  const Texture2D& right,
+                                  bool loaded,
+                                  Color fallback) {
+    if (!loaded) {
+        DrawRectangleRec(plataforma.rect, fallback);
         return;
     }
 
-    float tileW = (float)gOneUseCenter.width;
-    float tileH = (float)gOneUseCenter.height;
+    float tileW = (float)center.width;
+    float tileH = (float)center.height;
 
     Rectangle src = { 0.0f, 0.0f, tileW, tileH };
     float minWidth = tileW * 2.0f;
@@ -212,10 +304,10 @@ static void DibujarPlataformaUnUso(const Plataforma& plataforma) {
     if (plataforma.rect.width <= minWidth) {
         float leftW = plataforma.rect.width * 0.5f;
         float rightW = plataforma.rect.width - leftW;
-        DrawTexturePro(gOneUseLeft, src,
+        DrawTexturePro(left, src,
                        { plataforma.rect.x, plataforma.rect.y, leftW, plataforma.rect.height },
                        { 0.0f, 0.0f }, 0.0f, WHITE);
-        DrawTexturePro(gOneUseRight, src,
+        DrawTexturePro(right, src,
                        { plataforma.rect.x + leftW, plataforma.rect.y, rightW, plataforma.rect.height },
                        { 0.0f, 0.0f }, 0.0f, WHITE);
         return;
@@ -224,17 +316,17 @@ static void DibujarPlataformaUnUso(const Plataforma& plataforma) {
     float leftX = plataforma.rect.x;
     float rightX = plataforma.rect.x + plataforma.rect.width - tileW;
 
-    DrawTexturePro(gOneUseLeft, src,
+    DrawTexturePro(left, src,
                    { leftX, plataforma.rect.y, tileW, plataforma.rect.height },
                    { 0.0f, 0.0f }, 0.0f, WHITE);
-    DrawTexturePro(gOneUseRight, src,
+    DrawTexturePro(right, src,
                    { rightX, plataforma.rect.y, tileW, plataforma.rect.height },
                    { 0.0f, 0.0f }, 0.0f, WHITE);
 
     float x = leftX + tileW;
     float endX = rightX;
     while (x + tileW <= endX) {
-        DrawTexturePro(gOneUseCenter, src,
+        DrawTexturePro(center, src,
                        { x, plataforma.rect.y, tileW, plataforma.rect.height },
                        { 0.0f, 0.0f }, 0.0f, WHITE);
         x += tileW;
@@ -242,7 +334,7 @@ static void DibujarPlataformaUnUso(const Plataforma& plataforma) {
 
     float remainder = endX - x;
     if (remainder > 0.5f) {
-        DrawTexturePro(gOneUseCenter, src,
+        DrawTexturePro(center, src,
                        { x, plataforma.rect.y, remainder, plataforma.rect.height },
                        { 0.0f, 0.0f }, 0.0f, WHITE);
     }
@@ -255,13 +347,28 @@ void DibujarPlataformas(Plataforma plataformas[]) {
 
         switch (plataformas[i].tipo) {
             case NORMAL:
-                DrawRectangleRec(plataformas[i].rect, SKYBLUE);
+                DibujarPlataformaTiled(plataformas[i],
+                                       gNormalLeft, gNormalCenter, gNormalRight,
+                                       gNormalLoaded, SKYBLUE);
                 break;
             case MOVIL_BOOST:
-                DrawRectangleRec(plataformas[i].rect, BLUE);
+                DibujarPlataformaTiled(plataformas[i],
+                                       gBoostLeft, gBoostCenter, gBoostRight,
+                                       gBoostLoaded, BLUE);
+                if (gBoostArrowLoaded) {
+                    float arrowW = 19.0f;
+                    float arrowH = 30.0f;
+                    float arrowX = plataformas[i].rect.x + (plataformas[i].rect.width - arrowW) * 0.5f;
+                    float arrowY = plataformas[i].rect.y - arrowH - 4.0f;
+                    Rectangle src = { 0.0f, 0.0f, (float)gBoostArrow.width, (float)gBoostArrow.height };
+                    Rectangle dst = { arrowX, arrowY, arrowW, arrowH };
+                    DrawTexturePro(gBoostArrow, src, dst, { 0.0f, 0.0f }, 0.0f, WHITE);
+                }
                 break;
             case UN_USO:
-                DibujarPlataformaUnUso(plataformas[i]);
+                DibujarPlataformaTiled(plataformas[i],
+                                       gOneUseLeft, gOneUseCenter, gOneUseRight,
+                                       gOneUseLoaded, YELLOW);
                 break;
             default:
                 DrawRectangleRec(plataformas[i].rect, GRAY);

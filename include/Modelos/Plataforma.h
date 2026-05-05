@@ -12,9 +12,10 @@ struct Plataforma {
     bool activa;
 };
 
+// --- Configuracion general ---
 #define MAX_PLATAFORMAS 15
 
-// ─── PARÁMETROS CONFIGURABLES ───────────────────────────────────────────────
+// --- Parametros de dificultad ---
 // Umbrales de puntaje donde sube la dificultad (puedes agregar más niveles)
 #define UMBRAL_NIVEL_1   1000
 #define UMBRAL_NIVEL_2  3000
@@ -52,13 +53,14 @@ struct Plataforma {
 #define VEL_MOVIL_NIVEL_4  8.0f
 // ────────────────────────────────────────────────────────────────────────────
 
+// --- API de plataformas ---
 void InicializarPlataformas(Plataforma plataformas[]);
 void ActualizarPlataformas(Plataforma plataformas[], float scrollSpeed, int puntaje);
 void DibujarPlataformas(Plataforma plataformas[]);
 void CargarTexturasPlataformas();
 void LiberarTexturasPlataformas();
 
-// Devuelve el nivel actual según puntaje (útil para mostrarlo en main)
+// Devuelve el nivel actual segun puntaje (util para UI)
 int ObtenerNivel(int puntaje);
 
 #endif

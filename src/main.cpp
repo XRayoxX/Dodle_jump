@@ -13,11 +13,13 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "Dodle Jump -");
 
+    // --- Fondo y texturas ---
     Mapas miMapa;
     InicializarMapas(miMapa, R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo2.png)");
 
     CargarTexturasPlataformas();
 
+    // --- Entidades de juego ---
     Plataforma misPlataformas[MAX_PLATAFORMAS];
     InicializarPlataformas(misPlataformas);
 
@@ -82,6 +84,7 @@ int main() {
         EndDrawing(); // ← faltaba esto también
     }
 
+    // --- Limpieza ---
     LiberarMapas(miMapa);
     LiberarTexturasPlataformas();
     CloseWindow();

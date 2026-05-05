@@ -1,5 +1,6 @@
 #include "../../include/Modelos/Mapas.h"
 
+// --- Carga y gestion del fondo ---
 void InicializarMapas(Mapas& mapas, const char* rutaFondo) {
     TraceLog(LOG_INFO, "Working dir: %s", GetWorkingDirectory());
     TraceLog(LOG_INFO, "Intentando cargar fondo: %s", rutaFondo);
@@ -16,6 +17,7 @@ void InicializarMapas(Mapas& mapas, const char* rutaFondo) {
     }
 }
 
+// --- Dibujo del fondo ---
 void DibujarMapas(const Mapas& mapas, int screenWidth, int screenHeight) {
     if (mapas.fondo.id == 0 || mapas.fondo.width == 0 || mapas.fondo.height == 0) {
         // Fondo de respaldo para confirmar que el dibujo se llama.
@@ -29,6 +31,7 @@ void DibujarMapas(const Mapas& mapas, int screenWidth, int screenHeight) {
     DrawTexturePro(mapas.fondo, src, dst, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
 }
 
+// --- Liberacion del fondo ---
 void LiberarMapas(Mapas& mapas) {
     if (mapas.fondo.id != 0) {
         UnloadTexture(mapas.fondo);
