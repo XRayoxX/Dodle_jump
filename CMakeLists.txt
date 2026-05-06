@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 # 1. Añadimos raylib
 add_subdirectory(raylib)
-
+file(COPY Imagenes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY Imagenes DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY Audio DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -28,3 +28,6 @@ target_link_libraries(Dodle_jump PRIVATE raylib)
 # 4. IMPORTANTE: Decirle a CMake dónde buscar los archivos .h
 # Al poner 'include', podrás usar #include "Modelos/Jugador.h"
 target_include_directories(Dodle_jump PRIVATE include)
+# Esto copia la carpeta de Imagenes automáticamente al compilar
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Imagenes
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
