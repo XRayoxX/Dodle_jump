@@ -20,8 +20,6 @@ add_executable(Dodle_jump
         include/Modelos/Mapas.h
         src/Audio/AudioManager.cpp
         include/Audio/AudioManager.h
-        src/Modelos/Login.cpp
-        include/Modelos/Login.h
 )
 
 # 3. Enlazamos la librería
