@@ -6,8 +6,10 @@
 Login::Login() {
     username[0] = '\0';
     password[0] = '\0';
+
     usernameEditMode = false;
     passwordEditMode = false;
+
     loginFailed = false;
 }
 
@@ -19,11 +21,26 @@ void Login::Init() {
     background = LoadTexture("Imagenes/Login.png");
 }
 
-bool Login::Draw() {
-    int screenW = GetScreenWidth();   // 800
-    int screenH = GetScreenHeight();  // 600
+std::string Login::GetUsername() const {
+    return username;
+}
 
-    // Fondo completo
+std::string Login::GetPassword() const {
+    return password;
+}
+
+void Login::SetLoginFailed(bool value) {
+    loginFailed = value;
+}
+
+bool Login::Draw() {
+
+    int screenW = GetScreenWidth();
+    int screenH = GetScreenHeight();
+
+    // =========================
+    // FONDO
+    // =========================
     DrawTexturePro(
         background,
         Rectangle{ 0, 0, (float)background.width, (float)background.height },
@@ -33,70 +50,98 @@ bool Login::Draw() {
         WHITE
     );
 
-    // Panel fijo para ventana 800x600
-    // Ajusta estos valores mirando donde estan los campos en tu imagen
+    // =========================
+    // PANEL LOGIN
+    // =========================
     float panelW = 260.0f;
-    float panelX = (screenW - panelW) / 2.0f;  // centrado = 270
+    float panelX = (screenW - panelW) / 2.0f;
 
-    // Coordenadas Y fijas segun la imagen
-    float yUsuario    = 330.0f;   // donde dice "Usuario"
-    float yContrasena = 385.0f;   // donde dice "Contrasena"
-    float yBoton      = 430.0f;   // donde dice "INICIAR SESION"
-    float yError      = 470.0f;   // debajo del boton
+    float yUsuario    = 330.0f;
+    float yContrasena = 385.0f;
+    float yBoton      = 430.0f;
+    float yError      = 470.0f;
 
     Rectangle recUser = { panelX, yUsuario,    panelW, 38 };
     Rectangle recPass = { panelX, yContrasena, panelW, 38 };
     Rectangle recBtn  = { panelX, yBoton,      panelW, 42 };
 
-    // Quitar foco al hacer click fuera
+    // =========================
+    // QUITAR FOCO
+    // =========================
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+
         Vector2 m = GetMousePosition();
-        if (!CheckCollisionPointRec(m, recUser)) usernameEditMode = false;
-        if (!CheckCollisionPointRec(m, recPass)) passwordEditMode = false;
+
+        if (!CheckCollisionPointRec(m, recUser))
+            usernameEditMode = false;
+
+        if (!CheckCollisionPointRec(m, recPass))
+            passwordEditMode = false;
     }
 
-    // Estilo de los campos: fondo semitransparente, texto visible
-    GuiSetStyle(TEXTBOX, BASE_COLOR_NORMAL,   0xFFFFFF80);
-    GuiSetStyle(TEXTBOX, TEXT_COLOR_NORMAL,   0x000000FF);
-    GuiSetStyle(TEXTBOX, BORDER_COLOR_NORMAL, 0x00000000);
-    GuiSetStyle(TEXTBOX, BASE_COLOR_FOCUSED,  0xFFFFFFCC);
-    GuiSetStyle(TEXTBOX, TEXT_COLOR_FOCUSED,  0x000000FF);
-    GuiSetStyle(TEXTBOX, BORDER_COLOR_FOCUSED,0x4444FFFF);
+    // =========================
+    // ESTILO TEXTBOX
+    // =========================
+    GuiSetStyle(TEXTBOX, BASE_COLOR_NORMAL,    0xFFFFFF80);
+    GuiSetStyle(TEXTBOX, TEXT_COLOR_NORMAL,    0x000000FF);
+    GuiSetStyle(TEXTBOX, BORDER_COLOR_NORMAL,  0x00000000);
+
+    GuiSetStyle(TEXTBOX, BASE_COLOR_FOCUSED,   0xFFFFFFCC);
+    GuiSetStyle(TEXTBOX, TEXT_COLOR_FOCUSED,   0x000000FF);
+    GuiSetStyle(TEXTBOX, BORDER_COLOR_FOCUSED, 0x4444FFFF);
+
     GuiSetStyle(DEFAULT, TEXT_SIZE, 18);
 
-    // Campo Usuario
-    if (GuiTextBox(recUser, username, 32, usernameEditMode))
+    // =========================
+    // USUARIO
+    // =========================
+    if (GuiTextBox(recUser, username, 32, usernameEditMode)) {
         usernameEditMode = !usernameEditMode;
-
-    // Campo Contrasena
-    if (GuiTextBox(recPass, password, 32, passwordEditMode))
-        passwordEditMode = !passwordEditMode;
-
-    // Mensaje de error
-    if (loginFailed) {
-        DrawText("Usuario o contrasena incorrectos",
-                 (int)panelX, (int)yError, 15, RED);
     }
 
-    // Boton invisible sobre "INICIAR SESION"
-    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL,   0x00000000);
-    GuiSetStyle(BUTTON, BORDER_COLOR_NORMAL, 0x00000000);
-    GuiSetStyle(BUTTON, BASE_COLOR_FOCUSED,  0x00000033);
-    GuiSetStyle(BUTTON, BORDER_COLOR_FOCUSED,0x00000000);
-    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED,  0x00000066);
-    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL,   0x00000000);
+    // =========================
+    // CONTRASEÑA
+    // =========================
+    if (GuiTextBox(recPass, password, 32, passwordEditMode)) {
+        passwordEditMode = !passwordEditMode;
+    }
+
+    // =========================
+    // ERROR LOGIN
+    // =========================
+    if (loginFailed) {
+
+        DrawText(
+            "Usuario o contrasena incorrectos",
+            (int)panelX,
+            (int)yError,
+            15,
+            RED
+        );
+    }
+
+    // =========================
+    // BOTON INVISIBLE
+    // =========================
+    GuiSetStyle(BUTTON, BASE_COLOR_NORMAL,    0x00000000);
+    GuiSetStyle(BUTTON, BORDER_COLOR_NORMAL,  0x00000000);
+
+    GuiSetStyle(BUTTON, BASE_COLOR_FOCUSED,   0x00000033);
+    GuiSetStyle(BUTTON, BORDER_COLOR_FOCUSED, 0x00000000);
+
+    GuiSetStyle(BUTTON, BASE_COLOR_PRESSED,   0x00000066);
+    GuiSetStyle(BUTTON, TEXT_COLOR_NORMAL,    0x00000000);
 
     bool pressed = GuiButton(recBtn, "");
+
     GuiLoadStyleDefault();
 
-    // Validacion
+    // =========================
+    // BOTON LOGIN
+    // =========================
     if (pressed) {
-        if (strcmp(username, "Prueba") == 0 && strcmp(password, "123") == 0) {
-            loginFailed = false;
-            return true;
-        } else {
-            loginFailed = true;
-        }
+        loginFailed = false;
+        return true;
     }
 
     return false;
