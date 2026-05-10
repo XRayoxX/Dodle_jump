@@ -65,7 +65,9 @@ int main() {
     // MAPA Y JUEGO
     // =====================================================
     Mapas miMapa;
-    InicializarMapas(miMapa, "Imagenes/Fondo2.png");
+    InicializarMapas(miMapa,
+                     R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo2.png)",
+                     R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo1.png)");
 
     CargarTexturasPlataformas();
 
@@ -277,7 +279,7 @@ int main() {
             // =====================================================
             // DIBUJO
             // =====================================================
-            DibujarMapas(miMapa, screenWidth, screenHeight);
+            DibujarMapas(miMapa, screenWidth, screenHeight, ObtenerNivel(puntaje));
 
             DibujarPlataformas(misPlataformas);
 

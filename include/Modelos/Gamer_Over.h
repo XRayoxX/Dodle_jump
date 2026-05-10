@@ -21,6 +21,8 @@ private:
 
     GameOverResult result;
 
+    void UpdateLayout();
+
 public:
     GamerOver();
     ~GamerOver();

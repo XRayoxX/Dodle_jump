@@ -25,7 +25,7 @@ namespace GameApiConfig {
     // COSTO DE PARTIDA
     // =========================
 
-    const int COSTO_PARTIDA = 100;
+    const int COSTO_PARTIDA = 0;
 
     // =========================
     // REGLAS DE PREMIOS

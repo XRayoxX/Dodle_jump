@@ -1,12 +1,21 @@
 #include "Modelos/Gamer_Over.h"
 
+namespace {
+    const float kDesignWidth = 1200.0f;
+    const float kDesignHeight = 896.0f;
+
+    const Rectangle kRetryBase = { 450.0f, 522.6f, 300.0f, 74.7f };
+    const Rectangle kMenuBase = { 450.0f, 627.2f, 300.0f, 74.7f };
+    const Rectangle kExitBase = { 450.0f, 731.9f, 300.0f, 74.7f };
+}
+
 GamerOver::GamerOver() {
 
     result = GO_NONE;
 
-    btnRetry = { 300, 350, 200, 50 };
-    btnMenu  = { 300, 420, 200, 50 };
-    btnExit  = { 300, 490, 200, 50 };
+    btnRetry = { 0, 0, 0, 0 };
+    btnMenu  = { 0, 0, 0, 0 };
+    btnExit  = { 0, 0, 0, 0 };
 }
 
 GamerOver::~GamerOver() {
@@ -17,9 +26,42 @@ GamerOver::~GamerOver() {
 void GamerOver::Load(const char* imagePath) {
 
     background = LoadTexture(imagePath);
+    UpdateLayout();
+}
+
+void GamerOver::UpdateLayout() {
+
+    float screenW = (float)GetScreenWidth();
+    float screenH = (float)GetScreenHeight();
+
+    float scaleX = screenW / kDesignWidth;
+    float scaleY = screenH / kDesignHeight;
+
+    btnRetry = {
+        kRetryBase.x * scaleX,
+        kRetryBase.y * scaleY,
+        kRetryBase.width * scaleX,
+        kRetryBase.height * scaleY
+    };
+
+    btnMenu = {
+        kMenuBase.x * scaleX,
+        kMenuBase.y * scaleY,
+        kMenuBase.width * scaleX,
+        kMenuBase.height * scaleY
+    };
+
+    btnExit = {
+        kExitBase.x * scaleX,
+        kExitBase.y * scaleY,
+        kExitBase.width * scaleX,
+        kExitBase.height * scaleY
+    };
 }
 
 void GamerOver::Update() {
+
+    UpdateLayout();
 
     Vector2 mouse = GetMousePosition();
 
@@ -40,6 +82,8 @@ void GamerOver::Update() {
 }
 
 void GamerOver::Draw() {
+
+    UpdateLayout();
 
     DrawTexturePro(
         background,
@@ -67,27 +111,35 @@ void GamerOver::Draw() {
     DrawRectangleRec(btnMenu, DARKGRAY);
     DrawRectangleRec(btnExit, DARKGRAY);
 
+    int fontSize = (int)(20.0f * ((float)GetScreenHeight() / kDesignHeight));
+
+    const char* retryText = "REINTENTAR";
+    int retryWidth = MeasureText(retryText, fontSize);
     DrawText(
-        "REINTENTAR",
-        (int)btnRetry.x + 40,
-        (int)btnRetry.y + 15,
-        20,
+        retryText,
+        (int)(btnRetry.x + (btnRetry.width - retryWidth) * 0.5f),
+        (int)(btnRetry.y + (btnRetry.height - fontSize) * 0.5f),
+        fontSize,
         WHITE
     );
 
+    const char* menuText = "MENU";
+    int menuWidth = MeasureText(menuText, fontSize);
     DrawText(
-        "MENU",
-        (int)btnMenu.x + 70,
-        (int)btnMenu.y + 15,
-        20,
+        menuText,
+        (int)(btnMenu.x + (btnMenu.width - menuWidth) * 0.5f),
+        (int)(btnMenu.y + (btnMenu.height - fontSize) * 0.5f),
+        fontSize,
         WHITE
     );
 
+    const char* exitText = "SALIR";
+    int exitWidth = MeasureText(exitText, fontSize);
     DrawText(
-        "SALIR",
-        (int)btnExit.x + 70,
-        (int)btnExit.y + 15,
-        20,
+        exitText,
+        (int)(btnExit.x + (btnExit.width - exitWidth) * 0.5f),
+        (int)(btnExit.y + (btnExit.height - fontSize) * 0.5f),
+        fontSize,
         WHITE
     );
 }
