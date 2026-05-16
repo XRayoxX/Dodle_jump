@@ -18,7 +18,6 @@ private:
     Texture2D background;
     Texture2D retryTexture;
     Texture2D menuTexture;
-    Texture2D exitTexture;
 
     // Retro font (kept for consistency).
     Font uiFont;
@@ -33,7 +32,6 @@ private:
     // Button hitboxes.
     Rectangle btnRetry;
     Rectangle btnMenu;
-    Rectangle btnExit;
 
     // Current selection result.
     GameOverResult result;

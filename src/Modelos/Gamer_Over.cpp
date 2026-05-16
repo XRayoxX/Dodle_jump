@@ -10,7 +10,6 @@ namespace {
 
     const Rectangle kRetryBase = { 450.0f, 522.6f, 300.0f, 74.7f };
     const Rectangle kMenuBase = { 450.0f, 627.2f, 300.0f, 74.7f };
-    const Rectangle kExitBase = { 450.0f, 731.9f, 300.0f, 74.7f };
 }
 
 GamerOver::GamerOver() {
@@ -20,11 +19,9 @@ GamerOver::GamerOver() {
 
     btnRetry = { 0, 0, 0, 0 };
     btnMenu  = { 0, 0, 0, 0 };
-    btnExit  = { 0, 0, 0, 0 };
 
     retryTexture = Texture2D{};
     menuTexture = Texture2D{};
-    exitTexture = Texture2D{};
     uiFont = Font{};
     uiFontLoaded = false;
 
@@ -41,7 +38,6 @@ GamerOver::~GamerOver() {
     UnloadTexture(background);
     if (retryTexture.id != 0) UnloadTexture(retryTexture);
     if (menuTexture.id != 0) UnloadTexture(menuTexture);
-    if (exitTexture.id != 0) UnloadTexture(exitTexture);
     if (uiFontLoaded) UnloadFont(uiFont);
 
     for (Texture2D& frame : playerFrames) {
@@ -90,12 +86,6 @@ void GamerOver::Load(const char* imagePath) {
         "Imagenes/Ui/menu.png"
     });
 
-    std::string exitPath = resolveAsset({
-        "Imagenes/UI/salir.png",
-        "Imagenes/Ui/SALIR.png",
-        "Imagenes/Ui/salir.png"
-    });
-
     // Retro font (reserved for consistent UI styling).
     std::string fontPath = resolveAsset({
         "Imagenes/UI/pixel_font.ttf",
@@ -105,11 +95,9 @@ void GamerOver::Load(const char* imagePath) {
 
     retryTexture = LoadTexture(retryPath.c_str());
     menuTexture = LoadTexture(menuPath.c_str());
-    exitTexture = LoadTexture(exitPath.c_str());
 
     if (retryTexture.id != 0) SetTextureFilter(retryTexture, TEXTURE_FILTER_POINT);
     if (menuTexture.id != 0) SetTextureFilter(menuTexture, TEXTURE_FILTER_POINT);
-    if (exitTexture.id != 0) SetTextureFilter(exitTexture, TEXTURE_FILTER_POINT);
 
     // Load Marco frames for animation in Game Over.
     playerFrames.clear();
@@ -180,13 +168,6 @@ void GamerOver::UpdateLayout() {
         kMenuBase.width * scaleX,
         kMenuBase.height * scaleY
     };
-
-    btnExit = {
-        kExitBase.x * scaleX,
-        kExitBase.y * scaleY,
-        kExitBase.width * scaleX,
-        kExitBase.height * scaleY
-    };
 }
 
 void GamerOver::Update() {
@@ -211,10 +192,6 @@ void GamerOver::Update() {
 
         if (CheckCollisionPointRec(mouse, btnMenu)) {
             result = GO_MENU;
-        }
-
-        if (CheckCollisionPointRec(mouse, btnExit)) {
-            result = GO_EXIT;
         }
     }
 }
@@ -272,7 +249,6 @@ void GamerOver::Draw() {
     Vector2 mouse = GetMousePosition();
     bool hoverRetry = CheckCollisionPointRec(mouse, btnRetry);
     bool hoverMenu = CheckCollisionPointRec(mouse, btnMenu);
-    bool hoverExit = CheckCollisionPointRec(mouse, btnExit);
 
     // Draw pixel-art buttons with subtle hover lift.
     auto DrawButton = [&](Texture2D tex, Rectangle dest, bool hovered) {
@@ -292,7 +268,6 @@ void GamerOver::Draw() {
 
     DrawButton(retryTexture, btnRetry, hoverRetry);
     DrawButton(menuTexture, btnMenu, hoverMenu);
-    DrawButton(exitTexture, btnExit, hoverExit);
 }
 
 GameOverResult GamerOver::GetResult() {

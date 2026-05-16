@@ -324,9 +324,10 @@ bool Login::Draw() {
         recPass.x + 8.0f,
         recPass.y + (recPass.height - fontSize) / 2.0f
     };
-    DrawOutlinedText(password, passTextPos);
+    std::string maskedPassword(strlen(password), '*');
+    DrawOutlinedText(maskedPassword.c_str(), passTextPos);
     if (passwordEditMode && ShouldBlink()) {
-        float passTextWidth = MeasureTextEx(uiFont, password, fontSize, letterSpacing).x;
+        float passTextWidth = MeasureTextEx(uiFont, maskedPassword.c_str(), fontSize, letterSpacing).x;
         Vector2 cursorPos = { passTextPos.x + passTextWidth, passTextPos.y };
         DrawOutlinedText(cursorGlyph, cursorPos);
     }
