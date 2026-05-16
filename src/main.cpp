@@ -66,7 +66,7 @@ int main() {
     // =====================================================
     Mapas miMapa;
     InicializarMapas(miMapa,
-                     R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo2.png)",
+                     R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo0.png)",
                      R"(G:/Ale/Documents/Duddle Jump/Imagenes/Fondo1.png)");
 
     CargarTexturasPlataformas();
@@ -81,6 +81,7 @@ int main() {
 
         marcoAnimacion[i] =
             LoadTexture(TextFormat("Imagenes/marco_salto%i.PNG", i + 1));
+        SetTextureFilter(marcoAnimacion[i], TEXTURE_FILTER_POINT);
     }
 
     int frameActual = 0;
@@ -227,7 +228,7 @@ int main() {
 
                 framesCounter++;
 
-                int velocidadAnimacionActual = 15;
+                int velocidadAnimacionActual = 10;
 
                 if (framesCounter >= (60 / velocidadAnimacionActual)) {
 
